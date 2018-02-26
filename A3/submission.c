@@ -24,7 +24,7 @@ bool vector_fma(struct doubleVector * a,
       "1:\n"
           "cmp $1, %3\n"
           "jl Prep2\n"            
-      "FMA:\n"
+      "vector_packed:\n"
           "vmovupd (%0), %%ymm0\n"
           "vmovupd (%1), %%ymm1\n"
           "vmovupd (%2), %%ymm2\n"
@@ -33,17 +33,13 @@ bool vector_fma(struct doubleVector * a,
           "addq $32, %0\n"
           "addq $32, %1\n"
           "addq $32, %2\n"
-          "loop FMA\n"
+          "loop vector_packed\n"
           "cmp $0, %4\n"
           "jne Prep\n" 
           "jmp Done\n"
       "Prep:\n"
-          "subq $24, %0\n"
-          "subq $24, %1\n"
-          "subq $24, %2\n"
-      "Prep2:\n"
           "movl %4, %3\n"
-      "sFMA:\n"
+      "vector_scalar:\n"
           "movsd (%0), %%xmm0\n"
           "movsd (%1), %%xmm1\n"
           "movsd (%2), %%xmm2\n"
@@ -52,7 +48,7 @@ bool vector_fma(struct doubleVector * a,
           "addq $8, %0\n"
           "addq $8, %1\n"
           "addq $8, %2\n"
-          "loop sFMA\n"
+          "loop vector_scalar\n"
       "Done:\n" 
           
           : "+r" (a_data), "+r" (b_data), "+r" (c_data), "+c" (v), "+r" (s)
@@ -61,4 +57,4 @@ bool vector_fma(struct doubleVector * a,
        );
 
     return true;
-    }
+}
