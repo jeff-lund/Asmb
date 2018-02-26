@@ -23,7 +23,7 @@ bool vector_fma(struct doubleVector * a,
     __asm__ volatile (
       "1:\n"
           "cmp $1, %3\n"
-          "jl Prep2\n"            
+          "jl Prep\n"            
       "vector_packed:\n"
           "vmovupd (%0), %%ymm0\n"
           "vmovupd (%1), %%ymm1\n"
