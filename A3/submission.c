@@ -35,7 +35,7 @@ bool vector_fma(struct doubleVector * a,
           "vmovupd (%2), %%ymm2\n"
           "vfmadd231pd %%ymm1, %%ymm2, %%ymm0\n"
           "vmovupd %%ymm0, (%0)\n"
-		  // deux
+          // deux
           "vmovupd 0x20(%0), %%ymm3\n"
           "vmovupd 0x20(%1), %%ymm4\n"
           "vmovupd 0x20(%2), %%ymm5\n"
@@ -54,11 +54,11 @@ bool vector_fma(struct doubleVector * a,
           "vfmadd231pd %%ymm10, %%ymm11, %%ymm9\n"
           "vmovupd %%ymm9, 0x60(%0)\n"
           //cinq
-          "vmovupd 0x80(%0), %%ymm12\n"
-          "vmovupd 0x80(%1), %%ymm13\n"
-          "vmovupd 0x80(%2), %%ymm14\n"
-          "vfmadd231pd %%ymm13, %%ymm14, %%ymm12\n"
-          "vmovupd %%ymm12, 0x80(%0)\n"
+          //"vmovupd 0x80(%0), %%ymm12\n"
+          //"vmovupd 0x80(%1), %%ymm13\n"
+          //"vmovupd 0x80(%2), %%ymm14\n"
+          //"vfmadd231pd %%ymm13, %%ymm14, %%ymm12\n"
+          //"vmovupd %%ymm12, 0x80(%0)\n"
 	      //moving pointers
           "addq $0xA0, %0\n"
           "addq $0xA0, %1\n"
@@ -68,6 +68,8 @@ bool vector_fma(struct doubleVector * a,
           "je prep_scalar\n"
       "prep_four:\n"
           "movl %4, %3\n"
+          "cmp $0, %3\n"
+          "je prep_scalar\n"
       "vector_packed:\n" // single packed vector 
           "vmovupd (%0), %%ymm0\n"
           "vmovupd (%1), %%ymm1\n"
@@ -78,11 +80,10 @@ bool vector_fma(struct doubleVector * a,
           "addq $32, %1\n"
           "addq $32, %2\n"
           "loop vector_packed\n"
-          "cmp $0, %4\n"
-          "jne prep_scalar\n" 
-          "jmp Done\n"
       "prep_scalar:\n"
           "movl %5, %3\n"
+          "cmp $0, %3\n"
+          "je Done\n"
       "vector_scalar:\n"
           "movsd (%0), %%xmm0\n"
           "movsd (%1), %%xmm1\n"
