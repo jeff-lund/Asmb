@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include "vectors.h"
 
@@ -13,8 +11,8 @@ bool vector_fma(struct doubleVector * a,
     double * c_data = c->data; 
     int v, s, i;
     
-    s = length % 4; //scalared runs
-    v = (length - s) / 4; //vectored runs
+    s = length % 4; // Scalared runs
+    v = (length - s) / 4; // Vectored runs
 
     if(b->length != length || c->length != length)
         return false;
@@ -34,16 +32,15 @@ bool vector_fma(struct doubleVector * a,
           "addq $32, %1\n"
           "addq $32, %2\n"
           "loop vector_packed\n"
-          "cmp $0, %4\n"
-          "jne Prep\n" 
-          "jmp Done\n"
-      "Prep:\n"
+      "Prep:\n" // Reseting counter with scalared runs
           "movl %4, %3\n"
+          "cmp $0, %3\n"
+          "je Done\n" // Finish if no scalared runs to accomplish 
       "vector_scalar:\n"
           "movsd (%0), %%xmm0\n"
           "movsd (%1), %%xmm1\n"
           "movsd (%2), %%xmm2\n"
-          "vfmadd231sd %%xmm1, %%xmm2,  %%xmm0\n"
+          "vfmadd231sd %%xmm1, %%xmm2, %%xmm0\n"
           "movsd %%xmm0, (%0)\n" 
           "addq $8, %0\n"
           "addq $8, %1\n"
